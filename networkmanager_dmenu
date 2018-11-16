@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # encoding:utf8
 """NetworkManager command line dmenu script.
 
@@ -20,6 +20,7 @@ import shlex
 import sys
 import uuid
 from subprocess import Popen, PIPE
+from tkinter import messagebox
 
 import gi
 gi.require_version('NM', '1.0')
@@ -33,7 +34,7 @@ except ImportError:
 ENV = os.environ.copy()
 ENV['LC_ALL'] = 'C'
 ENC = locale.getpreferredencoding()
-
+# ENC = 'LC_CTYPE=en_US.UTF-8'
 CLIENT = NM.Client.new(None)
 LOOP = GLib.MainLoop()
 CONNS = CLIENT.get_connections()
@@ -152,6 +153,7 @@ def create_other_actions(client):
                    not wifi_enabled),
             Action("{} Networking".format(networking_action),
                    toggle_networking, not networking_enabled),
+            Action("Restart Network Manager", restart_nm),
             Action("Launch Connection Manager", launch_connection_editor),
             Action("Delete a Connection", delete_connection)]
 
@@ -414,6 +416,33 @@ def launch_connection_editor():
             Popen([terminal, "-e", "nmtui"]).communicate()
     else:
         Popen([terminal, "-e", "nmtui"]).communicate()
+
+def restart_nm():
+    """Restart the network manager in case it is stuck
+
+    """
+    password = get_passphrase();
+    passpipe = Popen(['echo',password], stdout=PIPE)
+    conf = configparser.ConfigParser()
+    conf.read(expanduser("~/.config/networkmanager-dmenu/config.ini"))
+    if conf.has_option("editor", "terminal"):
+        terminal = conf.get("editor", "terminal")
+    else:
+        terminal = "xterm"
+    if conf.has_option("editor", "gui_if_available"):
+        gui_if_available = conf.get("editor", "gui_if_available")
+    else:
+        gui_if_available = "True"
+    if gui_if_available == "True":
+        try:
+            messagebox.showinfo("Path A", "Path A")
+        Popen(["sudo","-S","/home/viktor/restartNM.sh"],stdin=passpipe.stdout).communicate(password)
+        except OSError:
+            messagebox.showinfo("Path B", "Path B")
+        Popen(["sudo","-S","/home/viktor/restartNM.sh"],stdin=passpipe.stdout).communicate(password)
+    else:
+        messagebox.showinfo("Path C", "Path C")
+        Popen(["sudo","-S","/home/viktor/restartNM.sh"],stdin=passpipe.stdout).communicate(password)
 
 
 def get_passphrase():
