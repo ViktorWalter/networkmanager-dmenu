@@ -435,13 +435,10 @@ def restart_nm():
         gui_if_available = "True"
     if gui_if_available == "True":
         try:
-            messagebox.showinfo("Path A", "Path A")
-        Popen(["sudo","-S","/home/viktor/restartNM.sh"],stdin=passpipe.stdout).communicate(password)
+            Popen(["sudo","-S","/home/viktor/restartNM.sh"],stdin=passpipe.stdout).communicate(password)
         except OSError:
-            messagebox.showinfo("Path B", "Path B")
-        Popen(["sudo","-S","/home/viktor/restartNM.sh"],stdin=passpipe.stdout).communicate(password)
+            Popen(["sudo","-S","/home/viktor/restartNM.sh"],stdin=passpipe.stdout).communicate(password)
     else:
-        messagebox.showinfo("Path C", "Path C")
         Popen(["sudo","-S","/home/viktor/restartNM.sh"],stdin=passpipe.stdout).communicate(password)
 
 
